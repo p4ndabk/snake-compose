@@ -11,3 +11,7 @@ Para começar a usar o **Snake-Compose**, siga os passos abaixo:
 1. Clone o repositório:
    ```bash
    git clone https://github.com/p4ndabk/snake-compose.git
+
+2. help
+```bash
+   python app.py help
