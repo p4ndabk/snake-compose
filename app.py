@@ -1,4 +1,5 @@
 import sys
+import time
 from commands.command import Command
 import importlib.resources
 
@@ -25,17 +26,18 @@ def list_commands_v1():
         if file.suffix == ".py" and file.stem != "__init__"
     ]
 
-def list_commands():
-    """
-    Lista todos os comandos disponíveis, retornando seus nomes e descrições.
+def to_write(text, delay=0.03):
+    for char in text:
+        print(char, end='', flush=True)
+        time.sleep(delay)
+    print()
 
-    :return: Lista de dicionários com "name" e "description" de cada comando.
-    """
+def list_commands():
     commands = []
 
     for file in importlib.resources.files(COMMANDS_PACKAGE).iterdir():
 
-        if file.suffix == ".py" and file.stem != "__init__" and file.stem != "command":
+        if file.suffix == ".py" and file.stem != "__init__" and file.stem != "command" and not file.name.startswith("._"):
             try:
                 module = importlib.import_module(f"{COMMANDS_PACKAGE}.{file.stem}")
 
@@ -45,7 +47,7 @@ def list_commands():
 
                 command_instance = command_class()
                 commands.append({
-                    "name": command_instance.name,
+                    "name": command_instance.name.replace("_command", ""),
                     "description": command_instance.description
                 })
 
@@ -54,22 +56,22 @@ def list_commands():
 
     return commands
 
-if __name__ == "__main__":
+def start():
     console = stract_command()
 
     if console == None or console == "help":
         print(BANNER)
-        print("Bem-vindo ao Snake-Compose!")
-        print("Um console feito para desenvolvedores destemidos.")
-        print("Digite 'help' para ver os comandos disponíveis.")
-        print("Que a cobra do código esteja com você! Lá Ele\n")
+        to_write("Bem-vindo ao Snake-Compose!")
+        to_write("Um console feito para desenvolvedores destemidos.")
+        to_write("Digite 'help' para ver os comandos disponíveis.")
+        to_write("Que a cobra do código esteja com você! Lá Ele\n")
 
-        print("Comandos Disponíveis:")
-        print("1. `help` - Exibe esta mensagem de ajuda.")
-        print("2. `list` - Lista todos os itens ou recursos disponíveis.")
+        to_write("Comandos Disponíveis:")
+        to_write("1. `help` - Exibe esta mensagem de ajuda.")
+        to_write("2. `list` - Lista todos os itens ou recursos disponíveis.")
 
-        print("\nDica: Use o comando `list` para ver o que você pode gerenciar!")
-        print("Que a força do código esteja com você! 🐍\n")
+        to_write("\nDica: Use o comando `list` para ver o que você pode gerenciar!")
+        to_write("Que a força do código esteja com você! 🐍\n")
         sys.exit()
     
     if console == "list":
@@ -77,14 +79,18 @@ if __name__ == "__main__":
         first_iteration = True
         for command in commands:
             if first_iteration:
-                print("-" * 30)
+                print("-" * 20)
                 first_iteration = False 
             print(f"Nome: {command['name']}")
             print(f"Descrição: {command['description']}")
-            print("-" * 30)
+            print("-" * 20)
         sys.exit(0)
     
         
     command = Command(console)
     command.run()
     
+
+
+if __name__ == "__main__":
+    start()
